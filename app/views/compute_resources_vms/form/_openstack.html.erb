@@ -17,6 +17,6 @@
              {}, { :label => _('Internal network'), :multiple => true } %>
 <%= selectable_f f, :network, compute_resource.address_pools, { :prompt => "None" }, { :label => _("Floating IP network") } %>
 
-<%= checkbox_f f, :boot_from_volume, {:label => "Boot from Volume", :help_inline => _("Create new boot volume from image")}, "true", "false" %>
+<%= checkbox_f f, :boot_from_volume, {:label => "Boot from volume", :help_inline => _("Create new boot volume from image")}, "true", "false" %>
 
-<%= text_f f, :size_gb, { :label => _("New Boot Volume Size (GB)"), :help_inline => _("Defaults to image size if left blank") } %>
+<%= text_f f, :size_gb, { :label => _("New Boot volume size (GB)"), :help_inline => _("Defaults to image size if left blank") } %>
