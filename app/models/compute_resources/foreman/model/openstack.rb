@@ -51,7 +51,7 @@ module Foreman::Model
 
     def internal_networks
       return {} if network_client.nil?
-      network_client.networks.all.select { |net| !net.router_external }
+      network_client.networks.all
     end
 
     def image_size(image_id)
