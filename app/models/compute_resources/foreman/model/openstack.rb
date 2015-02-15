@@ -34,6 +34,13 @@ module Foreman::Model
       attrs[:tenant] = name
     end
 
+    def boot_vol_id
+      attrs[:boot_vol_id]
+    end
+    def boot_vol_id=(id)
+      attrs[:boot_vol_id] = id
+    end
+
     def test_connection(options = {})
       super
       errors[:user].empty? and errors[:password] and tenants
@@ -63,13 +70,14 @@ module Foreman::Model
       args[:size_gb] = image_size(args[:image_ref]) if args[:size_gb].blank?
       boot_vol = volume_client.volumes.create( { :display_name => "volume-#{vm_name}", :volumeType => "Volume", :size => args[:size_gb], :imageRef => args[:image_ref] } )
       @boot_vol_id = boot_vol.id.tr('"', '')
+      logger.info("boot_from_volume: #{boot_vol.id} AND #{@boot_vol_id}")
       boot_vol.wait_for { status == 'available'  }
-      args[:block_device_mapping] = [ {
+      args[:block_device_mapping_v2] = [ {
         :api_ver => "v2",
         :source_type => "volume",
         :destination_type => "volume",
         :delete_on_termination => "1",
-        :uuid => boot_vol_id,
+        :uuid => @boot_vol_id,
         :boot_index => 0
       } ]
     end
