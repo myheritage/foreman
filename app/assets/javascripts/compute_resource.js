@@ -229,3 +229,13 @@ function allocation_switcher(element, action) {
   }
   return false;
 }
+
+function use_snapshot_for_vm_selected() {
+    if ($('#use_snapshot_for_vm').is(':checked')) {
+        $('#image_selection select').attr('disabled',true)
+    } else {
+        $('#image_selection select').attr('disabled',false)
+    }
+}
+
+$(document).on('change','#use_snapshot_for_vm',use_snapshot_for_vm_selected)

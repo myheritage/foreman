@@ -44,6 +44,7 @@ function computeResourceSelected(item){
 }
 
 function update_capabilities(capabilities){
+
   $('#image_provisioning').empty();
   $('#image_selection').appendTo($('#image_provisioning'));
   $('#snapshot_selection').appendTo($('#image_provisioning'));
@@ -476,6 +477,7 @@ function onHostEditLoad(){
      $('#host-conflicts-modal').modal('hide');
    });
   $('#image_selection').appendTo($('#image_provisioning'));
+  $('#snapshot_selection').appendTo($('#image_provisioning'));
   $('#params-tab').on('shown', function(){mark_params_override()});
   if ($('#supports_update') && !$('#supports_update').data('supports-update')) disable_vm_form_fields();
 }
