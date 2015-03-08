@@ -61,14 +61,28 @@ module Foreman::Model
       network_client.networks.all
     end
 
+    def possible_volumes
+      volume_client.volumes.all
+    end
+
+    def possible_snapshots
+      client.snapshots.all
+    end
+
     def image_size(image_id)
       client.get_image_details(image_id).body['image']['minDisk']
     end
 
     def boot_from_volume(args = {})
       vm_name = args[:name]
-      args[:size_gb] = image_size(args[:image_ref]) if args[:size_gb].blank?
-      boot_vol = volume_client.volumes.create( { :display_name => "volume-#{vm_name}", :volumeType => "Volume", :size => args[:size_gb], :imageRef => args[:image_ref] } )
+      boot_vol = nil
+      if args[:clone_from_volume] == "true"
+        args[:size_gb] = volume_client.get_volume_details(args[:source_volid]).body['volume']['size'] if args[:size_gb].blank?
+        boot_vol = volume_client.volumes.create( { :display_name => "volume-#{vm_name}", :volumeType => "Volume", :size => args[:size_gb], :source_volid => args[:source_volid] } )
+      else
+        args[:size_gb] = image_size(args[:image_ref]) if args[:size_gb].blank?
+        boot_vol = volume_client.volumes.create( { :display_name => "volume-#{vm_name}", :volumeType => "Volume", :size => args[:size_gb], :imageRef => args[:image_ref] } )
+      end
       @boot_vol_id = boot_vol.id.tr('"', '')
       logger.info("boot_from_volume: #{boot_vol.id} AND #{@boot_vol_id}")
       boot_vol.wait_for { status == 'available'  }

@@ -6,7 +6,7 @@ module FogExtensions
       included do
         alias_method_chain :security_groups, :no_id
         attr_reader :nics
-        attr_accessor :boot_from_volume, :size_gb
+        attr_accessor :boot_from_volume, :size_gb, :clone_from_snapshot,:snapshot_id
         attr_writer :security_group, :network # floating IP
       end
 
@@ -51,6 +51,14 @@ module FogExtensions
 
       def boot_from_volume
         attr[:boot_from_volume]
+      end
+
+      def clone_from_volume
+        attr[:clone_from_volume]
+      end
+
+      def snapshot_id
+        attr[:snapshot_id ]
       end
 
       def size_gb
