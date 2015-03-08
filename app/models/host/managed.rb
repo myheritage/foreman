@@ -649,7 +649,9 @@ class Host::Managed < Host::Base
 
   # no need to store anything in the db if the password is our default
   def root_pass
-    read_attribute(:root_pass).blank? ? (hostgroup.try(:root_pass) || Setting[:root_pass]) : read_attribute(:root_pass)
+    return read_attribute(:root_pass) if read_attribute(:root_pass).present?
+    return hostgroup.try(:root_pass) if hostgroup.try(:root_pass).present?
+    Setting[:root_pass]
   end
 
   def clone
@@ -936,7 +938,11 @@ class Host::Managed < Host::Base
   end
 
   def normalize_addresses
-    self.mac = Net::Validations.normalize_mac(mac)
+    begin
+      self.mac = Net::Validations.normalize_mac(mac)
+    rescue ArgumentError => e
+      self.errors.add(:mac, e.message)
+    end
     self.ip  = Net::Validations.normalize_ip(ip)
   end
 

@@ -306,6 +306,31 @@ class HostgroupTest < ActiveSupport::TestCase
     assert hostgroup.valid?
   end
 
+  test "root_pass inherited from parent if blank" do
+    parent = FactoryGirl.create(:hostgroup, :root_pass => '12345678')
+    hostgroup = FactoryGirl.build(:hostgroup, :parent => parent, :root_pass => '')
+    assert_equal parent.read_attribute(:root_pass), hostgroup.root_pass
+    hostgroup.save!
+    assert_blank hostgroup.read_attribute(:root_pass), 'root_pass should not be copied and stored on child'
+  end
+
+  test "root_pass inherited from settings if blank" do
+    Setting[:root_pass] = '12345678'
+    hostgroup = FactoryGirl.build(:hostgroup, :root_pass => '')
+    assert_equal '12345678', hostgroup.root_pass
+    hostgroup.save!
+    assert_blank hostgroup.read_attribute(:root_pass), 'root_pass should not be copied and stored on child'
+  end
+
+  test "root_pass inherited from settings if group and parent are blank" do
+    Setting[:root_pass] = '12345678'
+    parent = FactoryGirl.create(:hostgroup, :root_pass => '')
+    hostgroup = FactoryGirl.build(:hostgroup, :parent => parent, :root_pass => '')
+    assert_equal '12345678', hostgroup.root_pass
+    hostgroup.save!
+    assert_blank hostgroup.read_attribute(:root_pass), 'root_pass should not be copied and stored on child'
+  end
+
   test "hostgroup name can't be too big to create lookup value matcher over 255 characters" do
     parent = FactoryGirl.create(:hostgroup)
     min_lookupvalue_length = "hostgroup=".length + parent.title.length + 1
@@ -332,6 +357,16 @@ class HostgroupTest < ActiveSupport::TestCase
     parent = FactoryGirl.create(:hostgroup, :name => 'a')
     hostgroup = Hostgroup.new(:parent => parent, :name => 'b')
     assert_equal "#{hostgroup.id}-a-b",  hostgroup.to_param
+  end
+
+  test "clone should clone config groups as well" do
+    group = FactoryGirl.create(:hostgroup, :name => 'a')
+    config_group = ConfigGroup.create!(:name => 'Blah')
+    group.config_groups << config_group
+    group.save
+
+    cloned = group.clone("new_name")
+    assert cloned.config_groups.include?(config_group)
   end
 
 end

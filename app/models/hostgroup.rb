@@ -168,7 +168,10 @@ class Hostgroup < ActiveRecord::Base
 
   # no need to store anything in the db if the password is our default
   def root_pass
-    read_attribute(:root_pass) || nested_root_pw || Setting[:root_pass]
+    return read_attribute(:root_pass) if read_attribute(:root_pass).present?
+    npw = nested_root_pw
+    return npw if npw.present?
+    Setting[:root_pass]
   end
 
   # Clone the hostgroup
@@ -180,6 +183,7 @@ class Hostgroup < ActiveRecord::Base
     new.organizations = organizations
     # Clone any parameters as well
     self.group_parameters.each{|param| new.group_parameters << param.clone}
+    self.config_groups.each{|group| new.config_groups << group}
     new
   end
 
