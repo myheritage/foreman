@@ -46,6 +46,7 @@ function computeResourceSelected(item){
 function update_capabilities(capabilities){
   $('#image_provisioning').empty();
   $('#image_selection').appendTo($('#image_provisioning'));
+  $('#snapshot_selection').appendTo($('#image_provisioning'));
   update_provisioning_image();
   $('#manage_network').empty();
   $('#subnet_selection').appendTo($('#manage_network'));

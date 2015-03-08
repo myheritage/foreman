@@ -11,10 +11,12 @@
                { :include_blank => (images.empty? || images.size == 1) ? false : _('Please select an image') },
                { :disabled => images.empty?, :label => _("Image") } %>
 </div>
+<div id='snapshot_selection'>
 <%= checkbox_f f, :clone_from_snapshot, {:label => "Clone from snapshot", :help_inline => _("Use snapshot instead of image"),:id => 'use_snapshot_for_vm'}, "true", "false" %>
 <%= select_f f, :snapshot_id, snapshots, :id, :name,
              { :include_blank => (snapshots.empty? || snapshots.size == 1) ? false : _('Please select a snapshot') },
              { :disabled => snapshots.empty?, :label => _("Snapsot") } %>
+</div>
 <%= select_f f, :tenant_id, compute_resource.tenants, :id, :name, {}, :label => _('Tenant') %>
 
 <%= select_f f, :security_groups, compute_resource.security_groups, :name, :name, {}, :label => _("Security group")  %>
