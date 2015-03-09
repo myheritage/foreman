@@ -516,16 +516,6 @@ function image_provision_method_selected() {
   }
 }
 
-function use_snapshot_for_vm_selected() {
-    if ($('#use_snapshot_for_vm').is(':checked')) {
-        $('#image_selection select').attr('disabled',true)
-    } else {
-        $('#image_selection select').attr('disabled',false)
-    }
-}
-
-$(document).on('change','#use_snapshot_for_vm',use_snapshot_for_vm_selected)
-
 $(document).on('change', '#host_provision_method_image', image_provision_method_selected);
 
 $(document).on('change', '.interface_domain', function () {
