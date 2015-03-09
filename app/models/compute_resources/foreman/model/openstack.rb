@@ -76,9 +76,9 @@ module Foreman::Model
     def boot_from_volume(args = {})
       vm_name = args[:name]
       boot_vol = nil
-      if args[:clone_from_volume] == "true"
-        args[:size_gb] = volume_client.get_volume_details(args[:source_volid]).body['volume']['size'] if args[:size_gb].blank?
-        boot_vol = volume_client.volumes.create( { :display_name => "volume-#{vm_name}", :volumeType => "Volume", :size => args[:size_gb], :source_volid => args[:source_volid] } )
+      if args[:clone_from_snapshot] == "true"
+        args[:size_gb] = client.snapshots.get(args[:snapshot_id]).size if args[:size_gb].blank?
+        boot_vol = volume_client.volumes.create( { :display_name => "volume-#{vm_name}", :volumeType => "Volume", :size => args[:size_gb], :snapshot_id => args[:snapshot_id] } )
       else
         args[:size_gb] = image_size(args[:image_ref]) if args[:size_gb].blank?
         boot_vol = volume_client.volumes.create( { :display_name => "volume-#{vm_name}", :volumeType => "Volume", :size => args[:size_gb], :imageRef => args[:image_ref] } )
